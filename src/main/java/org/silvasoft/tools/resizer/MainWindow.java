@@ -2,14 +2,15 @@ package org.silvasoft.tools.resizer;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.naming.NameNotFoundException;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -18,7 +19,6 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
 import javax.swing.LookAndFeel;
 import javax.swing.SpringLayout;
@@ -37,7 +37,6 @@ public class MainWindow {
 	private JTextField windowTitleField;
 	private JCheckBox chckbxNewCheckBox;
 	private JList<ResizeData> list;
-	private JPanel panel_1;
 
 	/**
 	 * Launch the application.
@@ -50,11 +49,7 @@ public class MainWindow {
 	public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
 			IllegalAccessException {
 
-		Class lnfClass = Class.forName(UIManager.getSystemLookAndFeelClassName(), true, Thread.currentThread().getContextClassLoader());
-
-		LookAndFeel newInstance = (LookAndFeel) lnfClass.newInstance();
-
-		UIManager.setLookAndFeel(newInstance);
+		setSystemLookAndFeel();
 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -66,6 +61,21 @@ public class MainWindow {
 				}
 			}
 		});
+	}
+
+	/**
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws UnsupportedLookAndFeelException
+	 */
+	private static void setSystemLookAndFeel() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+			UnsupportedLookAndFeelException {
+		Class lnfClass = Class.forName(UIManager.getSystemLookAndFeelClassName(), true, Thread.currentThread().getContextClassLoader());
+
+		LookAndFeel newInstance = (LookAndFeel) lnfClass.newInstance();
+
+		UIManager.setLookAndFeel(newInstance);
 	}
 
 	/**
@@ -81,36 +91,142 @@ public class MainWindow {
 	private void initialize() {
 		frmResizeTool = new JFrame();
 		frmResizeTool.setTitle("Resize Tool");
-		frmResizeTool.setBounds(100, 100, 516, 239);
+		frmResizeTool.setBounds(100, 100, 500, 250);
 		frmResizeTool.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		DefaultListModel<ResizeData> dataModel = new DefaultListModel<ResizeData>();
-		fillWithDefaultData(dataModel);
+		JPanel mainPanel = new JPanel();
+		JPanel configurationPanel = initConfigPanel();
+		list = initList();
 
-		panel_1 = new JPanel();
-		frmResizeTool.getContentPane().add(panel_1, BorderLayout.CENTER);
-		SpringLayout sl_panel_1 = new SpringLayout();
-		panel_1.setLayout(sl_panel_1);
-		JPanel panel = new JPanel();
-		sl_panel_1.putConstraint(SpringLayout.NORTH, panel, 0, SpringLayout.NORTH, panel_1);
-		sl_panel_1.putConstraint(SpringLayout.WEST, panel, 5, SpringLayout.WEST, panel_1);
-		sl_panel_1.putConstraint(SpringLayout.SOUTH, panel, 196, SpringLayout.NORTH, panel_1);
-		sl_panel_1.putConstraint(SpringLayout.EAST, panel, 210, SpringLayout.WEST, panel_1);
-		panel_1.add(panel);
+		frmResizeTool.getContentPane().add(mainPanel, BorderLayout.CENTER);
+		mainPanel.add(configurationPanel);
+		mainPanel.add(list);
+
+		SpringLayout layout = new SpringLayout();
+
+		layout.putConstraint(SpringLayout.NORTH, configurationPanel, 0, SpringLayout.NORTH, mainPanel);
+		layout.putConstraint(SpringLayout.WEST, configurationPanel, 5, SpringLayout.WEST, mainPanel);
+		layout.putConstraint(SpringLayout.SOUTH, configurationPanel, 0, SpringLayout.SOUTH, mainPanel);
+
+		layout.putConstraint(SpringLayout.WEST, list, 5, SpringLayout.EAST, configurationPanel);
+		layout.putConstraint(SpringLayout.NORTH, list, 5, SpringLayout.NORTH, mainPanel);
+		layout.putConstraint(SpringLayout.SOUTH, list, 5, SpringLayout.SOUTH, mainPanel);
+		layout.putConstraint(SpringLayout.EAST, list, 5, SpringLayout.EAST, mainPanel);
+		mainPanel.setLayout(layout);
+	}
+
+	/**
+	 * @return
+	 */
+	private JPanel initConfigPanel() {
+
+		JPanel configurationPanel = new JPanel();
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[] { 90, 90, 0 };
+		gridBagLayout.rowHeights = new int[] { 20, 20, 20, 20, 20, 20, 20, 0 };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		configurationPanel.setLayout(gridBagLayout);
+
+		JLabel xLabel = new JLabel("X");
+		xLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_xLabel = new GridBagConstraints();
+		gbc_xLabel.anchor = GridBagConstraints.NORTH;
+		gbc_xLabel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_xLabel.insets = new Insets(10, 0, 5, 5);
+		gbc_xLabel.gridx = 0;
+		gbc_xLabel.gridy = 0;
+		configurationPanel.add(xLabel, gbc_xLabel);
+
+		JLabel lblY = new JLabel("Y");
+		lblY.setHorizontalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_lblY = new GridBagConstraints();
+		gbc_lblY.anchor = GridBagConstraints.NORTH;
+		gbc_lblY.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblY.insets = new Insets(10, 0, 5, 0);
+		gbc_lblY.gridx = 1;
+		gbc_lblY.gridy = 0;
+		configurationPanel.add(lblY, gbc_lblY);
 
 		xTextField = new JTextField();
 		xTextField.setText("0");
 		xTextField.setColumns(10);
+		GridBagConstraints gbc_xTextField = new GridBagConstraints();
+		gbc_xTextField.insets = new Insets(0, 0, 5, 5);
+		gbc_xTextField.gridx = 0;
+		gbc_xTextField.gridy = 1;
+		configurationPanel.add(xTextField, gbc_xTextField);
 
-		JLabel lblNewLabel = new JLabel("X");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		yTextField = new JTextField();
+		yTextField.setText("0");
+		yTextField.setColumns(10);
+		GridBagConstraints gbc_yTextField = new GridBagConstraints();
+		gbc_yTextField.insets = new Insets(0, 0, 5, 0);
+		gbc_yTextField.gridx = 1;
+		gbc_yTextField.gridy = 1;
+		configurationPanel.add(yTextField, gbc_yTextField);
+
+		JLabel lblNewLabel_1 = new JLabel("Width");
+		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_lblNewLabel_1 = new GridBagConstraints();
+		gbc_lblNewLabel_1.fill = GridBagConstraints.BOTH;
+		gbc_lblNewLabel_1.insets = new Insets(0, 0, 5, 5);
+		gbc_lblNewLabel_1.gridx = 0;
+		gbc_lblNewLabel_1.gridy = 2;
+		configurationPanel.add(lblNewLabel_1, gbc_lblNewLabel_1);
+
+		JLabel lblHeight = new JLabel("Height");
+		lblHeight.setHorizontalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_lblHeight = new GridBagConstraints();
+		gbc_lblHeight.fill = GridBagConstraints.HORIZONTAL;
+		gbc_lblHeight.insets = new Insets(0, 0, 5, 0);
+		gbc_lblHeight.gridx = 1;
+		gbc_lblHeight.gridy = 2;
+		configurationPanel.add(lblHeight, gbc_lblHeight);
 
 		wTextField = new JTextField();
 		wTextField.setText("1024");
 		wTextField.setColumns(10);
+		GridBagConstraints gbc_wTextField = new GridBagConstraints();
+		gbc_wTextField.insets = new Insets(0, 0, 5, 5);
+		gbc_wTextField.gridx = 0;
+		gbc_wTextField.gridy = 3;
+		configurationPanel.add(wTextField, gbc_wTextField);
 
-		JLabel lblNewLabel_1 = new JLabel("Width");
-		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+		hTextFiled = new JTextField();
+		hTextFiled.setText("800");
+		hTextFiled.setColumns(10);
+		GridBagConstraints gbc_hTextFiled = new GridBagConstraints();
+		gbc_hTextFiled.insets = new Insets(0, 0, 5, 0);
+		gbc_hTextFiled.gridx = 1;
+		gbc_hTextFiled.gridy = 3;
+		configurationPanel.add(hTextFiled, gbc_hTextFiled);
+
+		JLabel lblTitle = new JLabel("Window Title");
+		GridBagConstraints gbc_lblTitle = new GridBagConstraints();
+		gbc_lblTitle.gridwidth = 2;
+		gbc_lblTitle.insets = new Insets(0, 0, 5, 5);
+		gbc_lblTitle.gridx = 0;
+		gbc_lblTitle.gridy = 4;
+		configurationPanel.add(lblTitle, gbc_lblTitle);
+
+		windowTitleField = new JTextField();
+		windowTitleField.setText("....");
+		windowTitleField.setColumns(10);
+		GridBagConstraints gbc_windowTitleField = new GridBagConstraints();
+		gbc_windowTitleField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_windowTitleField.insets = new Insets(0, 0, 5, 0);
+		gbc_windowTitleField.gridwidth = 2;
+		gbc_windowTitleField.gridx = 0;
+		gbc_windowTitleField.gridy = 5;
+		configurationPanel.add(windowTitleField, gbc_windowTitleField);
+
+		chckbxNewCheckBox = new JCheckBox("Show");
+		chckbxNewCheckBox.setSelected(true);
+		GridBagConstraints gbc_chckbxNewCheckBox = new GridBagConstraints();
+		gbc_chckbxNewCheckBox.insets = new Insets(0, 0, 0, 5);
+		gbc_chckbxNewCheckBox.gridx = 0;
+		gbc_chckbxNewCheckBox.gridy = 6;
+		configurationPanel.add(chckbxNewCheckBox, gbc_chckbxNewCheckBox);
 
 		JButton btnResize = new JButton("Resize");
 		btnResize.addActionListener(new ActionListener() {
@@ -130,166 +246,33 @@ public class MainWindow {
 			}
 
 		});
+		GridBagConstraints gbc_btnResize = new GridBagConstraints();
+		gbc_btnResize.anchor = GridBagConstraints.NORTHEAST;
+		gbc_btnResize.gridx = 1;
+		gbc_btnResize.gridy = 6;
+		configurationPanel.add(btnResize, gbc_btnResize);
 
-		yTextField = new JTextField();
-		yTextField.setText("0");
-		yTextField.setColumns(10);
+		return configurationPanel;
 
-		JLabel lblY = new JLabel("Y");
-		lblY.setHorizontalAlignment(SwingConstants.CENTER);
+	}
 
-		hTextFiled = new JTextField();
-		hTextFiled.setText("800");
-		hTextFiled.setColumns(10);
+	/**
+	 * @return
+	 * 
+	 */
+	private JList<ResizeData> initList() {
 
-		JLabel lblHeight = new JLabel("Height");
-		lblHeight.setHorizontalAlignment(SwingConstants.CENTER);
-
-		chckbxNewCheckBox = new JCheckBox("Show");
-		chckbxNewCheckBox.setSelected(true);
-
-		windowTitleField = new JTextField();
-		windowTitleField.setText("....");
-		windowTitleField.setColumns(10);
-
-		JLabel lblTitle = new JLabel("Window Title");
-
-		JList list_1 = new JList();
-		GroupLayout gl_panel = new GroupLayout(panel);
-		gl_panel.setHorizontalGroup(gl_panel
-				.createParallelGroup(Alignment.TRAILING)
-				.addGroup(
-						gl_panel.createSequentialGroup()
-								.addContainerGap()
-								.addGroup(
-										gl_panel.createParallelGroup(Alignment.TRAILING)
-												.addGroup(
-														gl_panel.createSequentialGroup().addComponent(lblTitle)
-																.addContainerGap(514, Short.MAX_VALUE))
-												.addGroup(
-														gl_panel.createSequentialGroup()
-																.addGroup(
-																		gl_panel.createParallelGroup(Alignment.LEADING)
-																				.addComponent(windowTitleField, GroupLayout.DEFAULT_SIZE,
-																						337, Short.MAX_VALUE)
-																				.addGroup(
-																						gl_panel.createSequentialGroup()
-																								.addComponent(chckbxNewCheckBox)
-																								.addPreferredGap(
-																										ComponentPlacement.RELATED, 223,
-																										Short.MAX_VALUE)
-																								.addComponent(btnResize))
-																				.addGroup(
-																						gl_panel.createSequentialGroup()
-																								.addGroup(
-																										gl_panel.createParallelGroup(
-																												Alignment.LEADING)
-																												.addGroup(
-																														gl_panel.createParallelGroup(
-																																Alignment.LEADING,
-																																false)
-																																.addComponent(
-																																		xTextField)
-																																.addComponent(
-																																		lblNewLabel,
-																																		Alignment.TRAILING,
-																																		GroupLayout.DEFAULT_SIZE,
-																																		GroupLayout.DEFAULT_SIZE,
-																																		Short.MAX_VALUE))
-																												.addComponent(
-																														lblNewLabel_1,
-																														GroupLayout.DEFAULT_SIZE,
-																														245,
-																														Short.MAX_VALUE)
-																												.addComponent(
-																														wTextField,
-																														GroupLayout.PREFERRED_SIZE,
-																														GroupLayout.DEFAULT_SIZE,
-																														GroupLayout.PREFERRED_SIZE))
-																								.addPreferredGap(ComponentPlacement.RELATED)
-																								.addGroup(
-																										gl_panel.createParallelGroup(
-																												Alignment.TRAILING)
-																												.addGroup(
-																														gl_panel.createParallelGroup(
-																																Alignment.LEADING)
-																																.addComponent(
-																																		yTextField,
-																																		GroupLayout.PREFERRED_SIZE,
-																																		GroupLayout.DEFAULT_SIZE,
-																																		GroupLayout.PREFERRED_SIZE)
-																																.addComponent(
-																																		lblY,
-																																		Alignment.TRAILING,
-																																		GroupLayout.PREFERRED_SIZE,
-																																		86,
-																																		GroupLayout.PREFERRED_SIZE)
-																																.addComponent(
-																																		lblHeight,
-																																		Alignment.TRAILING,
-																																		GroupLayout.PREFERRED_SIZE,
-																																		86,
-																																		GroupLayout.PREFERRED_SIZE))
-																												.addComponent(
-																														hTextFiled,
-																														GroupLayout.PREFERRED_SIZE,
-																														GroupLayout.DEFAULT_SIZE,
-																														GroupLayout.PREFERRED_SIZE))))
-																.addGap(41)
-																.addComponent(list_1, GroupLayout.PREFERRED_SIZE, 1,
-																		GroupLayout.PREFERRED_SIZE).addGap(196)))));
-		gl_panel.setVerticalGroup(gl_panel.createParallelGroup(Alignment.LEADING).addGroup(
-				gl_panel.createSequentialGroup()
-						.addGroup(
-								gl_panel.createParallelGroup(Alignment.LEADING)
-										.addGroup(
-												gl_panel.createSequentialGroup()
-														.addGap(13)
-														.addGroup(
-																gl_panel.createParallelGroup(Alignment.BASELINE)
-																		.addComponent(lblY)
-																		.addComponent(list_1, GroupLayout.PREFERRED_SIZE, 1,
-																				GroupLayout.PREFERRED_SIZE))
-														.addGap(2)
-														.addGroup(
-																gl_panel.createParallelGroup(Alignment.TRAILING)
-																		.addComponent(yTextField, GroupLayout.PREFERRED_SIZE,
-																				GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-																		.addComponent(xTextField, GroupLayout.PREFERRED_SIZE,
-																				GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-														.addGap(4)
-														.addGroup(
-																gl_panel.createParallelGroup(Alignment.BASELINE)
-																		.addComponent(lblHeight)
-																		.addComponent(lblNewLabel_1, GroupLayout.PREFERRED_SIZE, 18,
-																				GroupLayout.PREFERRED_SIZE))
-														.addPreferredGap(ComponentPlacement.RELATED)
-														.addGroup(
-																gl_panel.createParallelGroup(Alignment.BASELINE)
-																		.addComponent(wTextField, GroupLayout.PREFERRED_SIZE,
-																				GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-																		.addComponent(hTextFiled, GroupLayout.PREFERRED_SIZE,
-																				GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-										.addGroup(gl_panel.createSequentialGroup().addContainerGap().addComponent(lblNewLabel)))
-						.addPreferredGap(ComponentPlacement.RELATED).addComponent(lblTitle).addPreferredGap(ComponentPlacement.RELATED)
-						.addComponent(windowTitleField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(ComponentPlacement.RELATED)
-						.addGroup(gl_panel.createParallelGroup(Alignment.BASELINE).addComponent(chckbxNewCheckBox).addComponent(btnResize))
-						.addGap(18)));
-		panel.setLayout(gl_panel);
-		list = new JList<ResizeData>(dataModel);
-		sl_panel_1.putConstraint(SpringLayout.NORTH, list, 5, SpringLayout.NORTH, panel_1);
-		sl_panel_1.putConstraint(SpringLayout.WEST, list, 5, SpringLayout.EAST, panel);
-		sl_panel_1.putConstraint(SpringLayout.SOUTH, list, 5, SpringLayout.SOUTH, panel_1);
-		sl_panel_1.putConstraint(SpringLayout.EAST, list, 5, SpringLayout.EAST, panel_1);
+		DefaultListModel<ResizeData> dataModel = new DefaultListModel<ResizeData>();
+		fillWithDefaultData(dataModel);
+		JList<ResizeData> list = new JList<ResizeData>(dataModel);
 		list.setBorder(new TitledBorder(null, "Previous values", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_1.add(list);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		new ListAction(list, new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
+				JList<ResizeData> list = (JList<ResizeData>) e.getSource();
 				ResizeData selectedValue = list.getSelectedValue();
 				if (selectedValue != null) {
 					try {
@@ -303,7 +286,7 @@ public class MainWindow {
 				}
 			}
 		});
-
+		return list;
 	}
 
 	private void fillWithDefaultData(DefaultListModel<ResizeData> dataModel) {
