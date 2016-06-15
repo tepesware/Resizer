@@ -51,12 +51,16 @@ public class MainWindow {
 
 		setSystemLookAndFeel();
 
-		EventQueue.invokeLater(() -> {
-			try {
-				MainWindow window = new MainWindow();
-				window.frmResizeTool.setVisible(true);
-			} catch (Exception e) {
-				e.printStackTrace();
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+
+				try {
+					MainWindow window = new MainWindow();
+					window.frmResizeTool.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		});
 	}
