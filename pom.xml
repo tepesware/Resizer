@@ -4,7 +4,7 @@
 
 	<groupId>org.silvasoft.tools</groupId>
 	<artifactId>resizer</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<packaging>jar</packaging>
 
 	<name>Resizer Tool</name>
