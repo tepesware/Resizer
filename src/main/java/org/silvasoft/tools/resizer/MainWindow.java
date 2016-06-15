@@ -46,19 +46,17 @@ public class MainWindow {
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException,
-			IllegalAccessException {
+	public static void main(String[] args)
+			throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 
 		setSystemLookAndFeel();
 
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainWindow window = new MainWindow();
-					window.frmResizeTool.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+		EventQueue.invokeLater(() -> {
+			try {
+				MainWindow window = new MainWindow();
+				window.frmResizeTool.setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		});
 	}
@@ -69,9 +67,10 @@ public class MainWindow {
 	 * @throws IllegalAccessException
 	 * @throws UnsupportedLookAndFeelException
 	 */
-	private static void setSystemLookAndFeel() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-			UnsupportedLookAndFeelException {
-		Class lnfClass = Class.forName(UIManager.getSystemLookAndFeelClassName(), true, Thread.currentThread().getContextClassLoader());
+	private static void setSystemLookAndFeel()
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
+		Class lnfClass = Class.forName(UIManager.getSystemLookAndFeelClassName(), true,
+				Thread.currentThread().getContextClassLoader());
 
 		LookAndFeel newInstance = (LookAndFeel) lnfClass.newInstance();
 
@@ -279,7 +278,8 @@ public class MainWindow {
 						resize(selectedValue);
 						fillData(selectedValue);
 					} catch (NameNotFoundException e1) {
-						JOptionPane.showMessageDialog(frmResizeTool, "Window \"" + selectedValue.getWindowName() + "\" not found ");
+						JOptionPane.showMessageDialog(frmResizeTool,
+								"Window \"" + selectedValue.getWindowName() + "\" not found ");
 
 						e1.printStackTrace();
 					}
