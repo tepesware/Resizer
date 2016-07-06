@@ -1,8 +1,23 @@
-package org.silvasoft.tools.resizer;
+package org.silvasoft.tools.resizer.config;
 
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+
+@Element(name="resizeData")
 public class ResizeData {
+	
+	@Attribute
 	String windowName;
-	int x, y, h, w;
+	
+	@Attribute
+	int x;
+	@Attribute
+	int y;
+	@Attribute
+	int h;
+	@Attribute
+	int w;
+	@Attribute(required=false)
 	boolean show;
 
 	public ResizeData(String windowName, int x, int y, int h, int w, boolean show) {
@@ -14,6 +29,12 @@ public class ResizeData {
 		this.w = w;
 		this.show = show;
 	}
+	
+
+	public ResizeData() {
+	}
+
+
 
 	public String getWindowName() {
 		return windowName;

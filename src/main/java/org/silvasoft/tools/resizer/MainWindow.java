@@ -27,8 +27,14 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 
+import org.silvasoft.tools.resizer.config.Configuration;
+import org.silvasoft.tools.resizer.config.ConfigReader;
+import org.silvasoft.tools.resizer.config.ResizeData;
+
 public class MainWindow {
 
+	private static final String DEF_CONFIG_XML = "config.xml";
+	
 	private JFrame frmResizeTool;
 	private JTextField xTextField;
 	private JTextField wTextField;
@@ -294,9 +300,20 @@ public class MainWindow {
 	}
 
 	private void fillWithDefaultData(DefaultListModel<ResizeData> dataModel) {
-		dataModel.addElement(new ResizeData("Kalkulator", 0, 0, 800, 600, true));
-		dataModel.addElement(new ResizeData("Kalkulator", 0, 0, 1024, 768, true));
-		dataModel.addElement(new ResizeData("Kalkulator", 0, 0, 1024, 1028, true));
+		
+		try {
+			
+			Configuration readConfig = new ConfigReader().readConfig(DEF_CONFIG_XML);
+			readConfig.getResizeData().stream().forEach(x -> dataModel.addElement(x));
+			
+		} catch (Exception e) {
+
+			System.err.println("Could not read config, using default");
+			dataModel.addElement(new ResizeData("Kalkulator", 0, 0, 800, 600, true));
+			dataModel.addElement(new ResizeData("Kalkulator", 0, 0, 1024, 768, true));
+			dataModel.addElement(new ResizeData("Kalkulator", 0, 0, 1024, 1028, true));
+		}
+		
 
 	}
 
