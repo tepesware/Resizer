@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.naming.NameNotFoundException;
 import javax.swing.AbstractAction;
@@ -27,8 +28,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 
-import org.silvasoft.tools.resizer.config.Configuration;
 import org.silvasoft.tools.resizer.config.ConfigReader;
+import org.silvasoft.tools.resizer.config.Configuration;
 import org.silvasoft.tools.resizer.config.ResizeData;
 
 public class MainWindow {
@@ -304,7 +305,11 @@ public class MainWindow {
 		try {
 			
 			Configuration readConfig = new ConfigReader().readConfig(DEF_CONFIG_XML);
-			readConfig.getResizeData().stream().forEach(x -> dataModel.addElement(x));
+
+			List<ResizeData> resizeData = readConfig.getResizeData();
+			for (ResizeData data : resizeData) {
+				dataModel.addElement(data);
+			}
 			
 		} catch (Exception e) {
 
