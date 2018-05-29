@@ -5,10 +5,10 @@ import org.simpleframework.xml.Element;
 
 @Element(name="resizeData")
 public class ResizeData {
-	
+
 	@Attribute
 	String windowName;
-	
+
 	@Attribute
 	int x;
 	@Attribute
@@ -17,19 +17,42 @@ public class ResizeData {
 	int h;
 	@Attribute
 	int w;
+
+	int w2;
+
+	int h2;
+
 	@Attribute(required=false)
 	boolean show;
 
-	public ResizeData(String windowName, int x, int y, int h, int w, boolean show) {
+	public int getW2() {
+		return w2;
+	}
+
+	public void setW2(int w2) {
+		this.w2 = w2;
+	}
+
+	public int getH2() {
+		return h2;
+	}
+
+	public void setH2(int h2) {
+		this.h2 = h2;
+	}
+
+	public ResizeData(String windowName, int x, int y, int h, int w, int h2, int w2, boolean show) {
 		super();
 		this.windowName = windowName;
 		this.x = x;
 		this.y = y;
 		this.h = h;
 		this.w = w;
+		this.w2 = w2;
+		this.h2 = h2;
 		this.show = show;
 	}
-	
+
 
 	public ResizeData() {
 	}
