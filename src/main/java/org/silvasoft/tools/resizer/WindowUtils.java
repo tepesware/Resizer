@@ -6,7 +6,7 @@ import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinUser;
 
-public class ResizeUtils {
+public class WindowUtils {
 
 	private static final int SWP_SHOWWINDOW = 0x0040;
 
@@ -23,6 +23,18 @@ public class ResizeUtils {
 			user32.ShowWindow(hWnd, WinUser.SW_SHOW);
 			user32.SetForegroundWindow(hWnd);
 		}
+	}
+
+	public synchronized static void minimizeWindow(String lpWindowName, MimimizeOption mimimizeOption)
+			throws NameNotFoundException {
+		final User32 user32 = User32.INSTANCE;
+		HWND hWnd = user32.FindWindow(null, lpWindowName);
+		if (hWnd == null) {
+			throw new NameNotFoundException();
+		}
+
+		user32.SetForegroundWindow(hWnd);
+		user32.ShowWindow(hWnd, mimimizeOption.getCode());
 	}
 
 }

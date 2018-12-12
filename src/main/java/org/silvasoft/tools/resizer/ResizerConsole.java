@@ -17,7 +17,7 @@ public class ResizerConsole {
 		int height = 728;
 
 		try {
-			ResizeUtils.resizeWindow(lpWindowName, x, y, width * 2, height, true);
+			WindowUtils.resizeWindow(lpWindowName, x, y, width * 2, height, true);
 		} catch (NameNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

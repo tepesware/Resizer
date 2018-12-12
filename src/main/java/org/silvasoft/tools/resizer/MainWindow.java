@@ -17,6 +17,7 @@ import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -48,10 +49,11 @@ public class MainWindow {
 	private JTextField hTextFiled;
 	private JTextField windowTitleField;
 	private JCheckBox chckbxNewCheckBox;
+	private JComboBox<MimimizeOption> minimizeOptions;
 	private JList<ResizeData> list;
 	private ScheduledExecutorService scheduledExecutorService;
 	private static Integer frameWidth = 600;
-	private static Integer frameHeight = 400;
+	private static Integer frameHeight = 500;
 
 	/**
 	 * Launch the application.
@@ -155,8 +157,9 @@ public class MainWindow {
 		JPanel configurationPanel = new JPanel();
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 90, 90, 0 };
-		gridBagLayout.rowHeights = new int[] { 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 0 };
-		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gridBagLayout.rowHeights = new int[] { 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 0 };
+		gridBagLayout.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				0.0, 0.0, Double.MIN_VALUE };
 		configurationPanel.setLayout(gridBagLayout);
 
 		int gridy = 0;
@@ -226,6 +229,11 @@ public class MainWindow {
 
 		gridy = setupTerminateCycleResolutionButton(configurationPanel, gridy);
 
+		gridy++;
+		gridy = setupMinimizeWinowSizeFields(configurationPanel, gridy);
+
+		gridy = setupMinimizeButton(configurationPanel, gridy);
+
 		return configurationPanel;
 
 	}
@@ -281,6 +289,58 @@ public class MainWindow {
 		gbcHTextFiled2.gridx = 1;
 		gbcHTextFiled2.gridy = gridy;
 		configurationPanel.add(hTextFiled2, gbcHTextFiled2);
+
+		gridy++;
+
+		return gridy;
+	}
+
+	private int setupMinimizeWinowSizeFields(JPanel configurationPanel, int gridy) {
+
+		JLabel titleLabel1 = new JLabel("Minimize Window");
+		titleLabel1.setHorizontalAlignment(SwingConstants.CENTER);
+		GridBagConstraints gbc_titleLabel1 = new GridBagConstraints();
+		gbc_titleLabel1.anchor = GridBagConstraints.NORTH;
+		gbc_titleLabel1.fill = GridBagConstraints.HORIZONTAL;
+		gbc_titleLabel1.insets = new Insets(10, 0, 5, 5);
+		gbc_titleLabel1.gridx = 0;
+		gbc_titleLabel1.gridy = gridy;
+		configurationPanel.add(titleLabel1, gbc_titleLabel1);
+
+		gridy++;
+		minimizeOptions = new JComboBox<>(MimimizeOption.values());
+		GridBagConstraints gbcWTextField2 = new GridBagConstraints();
+		gbcWTextField2.insets = new Insets(0, 0, 5, 5);
+		gbcWTextField2.gridx = 0;
+		gbcWTextField2.gridy = gridy;
+		configurationPanel.add(minimizeOptions, gbcWTextField2);
+
+		gridy++;
+
+		return gridy;
+	}
+
+	private int setupMinimizeButton(JPanel configurationPanel, int gridy) {
+		JButton btnMinimize = new JButton("Minimize");
+		btnMinimize.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ResizeData data = collectData();
+				if (data != null)
+					try {
+						minimize(data, (MimimizeOption) minimizeOptions.getSelectedItem());
+						addToList(data);
+					} catch (NameNotFoundException e1) {
+						JOptionPane.showMessageDialog(frmResizeTool, "Window \"" + data.getWindowName() + "\" not found ");
+						e1.printStackTrace();
+					}
+			}
+
+		});
+		GridBagConstraints gbcCycle = new GridBagConstraints();
+		gbcCycle.anchor = GridBagConstraints.NORTHEAST;
+		gbcCycle.gridx = 1;
+		gbcCycle.gridy = gridy;
+		configurationPanel.add(btnMinimize, gbcCycle);
 
 		gridy++;
 
@@ -536,11 +596,15 @@ public class MainWindow {
 	}
 
 	private void resize(ResizeData data) throws NameNotFoundException {
-		ResizeUtils.resizeWindow(data.getWindowName(), data.getX(), data.getY(), data.getW(), data.getH(), data.isShow());
+		WindowUtils.resizeWindow(data.getWindowName(), data.getX(), data.getY(), data.getW(), data.getH(), data.isShow());
+	}
+
+	private void minimize(ResizeData data, MimimizeOption mimimizeOption) throws NameNotFoundException {
+		WindowUtils.minimizeWindow(data.getWindowName(), mimimizeOption);
 	}
 
 	private void cycleResize(ResizeData data, int w, int h) throws NameNotFoundException {
-		ResizeUtils.resizeWindow(data.getWindowName(), data.getX(), data.getY(), w, h, data.isShow());
+		WindowUtils.resizeWindow(data.getWindowName(), data.getX(), data.getY(), w, h, data.isShow());
 	}
 
 	private void addToList(ResizeData data) {
