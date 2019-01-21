@@ -36,6 +36,8 @@ import org.silvasoft.tools.resizer.config.ConfigReader;
 import org.silvasoft.tools.resizer.config.Configuration;
 import org.silvasoft.tools.resizer.config.ResizeData;
 
+import com.sun.jna.platform.win32.Kernel32Util;
+
 public class MainWindow {
 
 	private static final String DEF_CONFIG_XML = "config.xml";
@@ -210,6 +212,9 @@ public class MainWindow {
 					} catch (NameNotFoundException e1) {
 						JOptionPane.showMessageDialog(frmResizeTool, "Window \"" + data.getWindowName() + "\" not found ");
 						e1.printStackTrace();
+					} catch (ResizeException e1) {
+						errorOnResize(e1);
+						e1.printStackTrace();
 					}
 
 			}
@@ -236,6 +241,13 @@ public class MainWindow {
 
 		return configurationPanel;
 
+	}
+
+	private void errorOnResize(ResizeException e1) {
+		String messageFromLastErrorCode = Kernel32Util.formatMessageFromLastErrorCode(e1.getLastError());
+		JOptionPane.showMessageDialog(frmResizeTool,
+				"Move window failed with error " + e1.getLastError() + " " + messageFromLastErrorCode, "Error",
+				JOptionPane.ERROR_MESSAGE);
 	}
 
 	private int setupAltWinowSizeFields(JPanel configurationPanel, int gridy) {
@@ -369,7 +381,7 @@ public class MainWindow {
 		gbc_lblY.gridy = gridy;
 		configurationPanel.add(lblY, gbc_lblY);
 
-		gridy ++;
+		gridy++;
 
 		xTextField = new JTextField();
 		xTextField.setText("0");
@@ -460,7 +472,7 @@ public class MainWindow {
 		gbcTerminate.gridy = gridy;
 		configurationPanel.add(btnTerminate, gbcTerminate);
 
-		gridy ++;
+		gridy++;
 		return gridy;
 	}
 
@@ -491,6 +503,8 @@ public class MainWindow {
 						} catch (NameNotFoundException e1) {
 							JOptionPane.showMessageDialog(frmResizeTool, "Window \"" + data.getWindowName() + "\" not found ");
 							e1.printStackTrace();
+						} catch (ResizeException e1) {
+							errorOnResize(e1);
 						}
 					}
 				}, 1500, 1500, TimeUnit.MILLISECONDS);
@@ -504,7 +518,7 @@ public class MainWindow {
 		gbcCycle.gridy = gridy;
 		configurationPanel.add(btnCycle, gbcCycle);
 
-		gridy ++;
+		gridy++;
 
 		return gridy;
 	}
@@ -536,6 +550,8 @@ public class MainWindow {
 								"Window \"" + selectedValue.getWindowName() + "\" not found ");
 
 						e1.printStackTrace();
+					} catch (ResizeException e1) {
+						errorOnResize(e1);
 					}
 				}
 			}
@@ -561,7 +577,6 @@ public class MainWindow {
 			dataModel.addElement(new ResizeData("Kalkulator", 0, 0, 1024, 768, 0, 0, true));
 			dataModel.addElement(new ResizeData("Kalkulator", 0, 0, 1024, 1028, 0, 0, true));
 		}
-
 
 	}
 
@@ -595,7 +610,7 @@ public class MainWindow {
 		chckbxNewCheckBox.setSelected(data.isShow());
 	}
 
-	private void resize(ResizeData data) throws NameNotFoundException {
+	private void resize(ResizeData data) throws NameNotFoundException, ResizeException {
 		WindowUtils.resizeWindow(data.getWindowName(), data.getX(), data.getY(), data.getW(), data.getH(), data.isShow());
 	}
 
@@ -603,7 +618,7 @@ public class MainWindow {
 		WindowUtils.minimizeWindow(data.getWindowName(), mimimizeOption);
 	}
 
-	private void cycleResize(ResizeData data, int w, int h) throws NameNotFoundException {
+	private void cycleResize(ResizeData data, int w, int h) throws NameNotFoundException, ResizeException {
 		WindowUtils.resizeWindow(data.getWindowName(), data.getX(), data.getY(), w, h, data.isShow());
 	}
 

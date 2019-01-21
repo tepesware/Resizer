@@ -2,6 +2,7 @@ package org.silvasoft.tools.resizer;
 
 import javax.naming.NameNotFoundException;
 
+import com.sun.jna.Native;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinUser;
@@ -11,14 +12,19 @@ public class WindowUtils {
 	private static final int SWP_SHOWWINDOW = 0x0040;
 
 	public synchronized static void resizeWindow(String lpWindowName, int x, int y, int width, int height, boolean show)
-			throws NameNotFoundException {
+			throws NameNotFoundException, ResizeException {
 		final User32 user32 = User32.INSTANCE;
 		HWND hWnd = user32.FindWindow(null, lpWindowName);
 		if (hWnd == null) {
 			throw new NameNotFoundException();
 		}
 
-		user32.SetWindowPos(hWnd, null, x, y, width, height, SWP_SHOWWINDOW);
+		boolean moveWindow = user32.MoveWindow(hWnd, x, y, width, height, true);
+		if (!moveWindow) {
+			int lastError = Native.getLastError();
+			throw new ResizeException(lastError);
+
+		}
 		if (show) {
 			user32.ShowWindow(hWnd, WinUser.SW_SHOW);
 			user32.SetForegroundWindow(hWnd);

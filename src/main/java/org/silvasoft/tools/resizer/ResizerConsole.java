@@ -21,6 +21,8 @@ public class ResizerConsole {
 		} catch (NameNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (ResizeException e) {
+			e.printStackTrace();
 		}
 
 	}
